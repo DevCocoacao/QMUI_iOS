@@ -195,9 +195,15 @@ static NSUInteger const kTagForCenteredPlayButton = 1;
         return;
     }
     self.imageView.image = image;
-    
+    CGSize size = image.size;
+    if (size.width/self.bounds.size.width > size.height/self.bounds.size.height) {
+        size = CGSizeMake(self.bounds.size.height/size.height*size.width, self.bounds.size.height);
+    }else{
+        size = CGSizeMake(self.bounds.size.width, self.bounds.size.width/size.width*size.height);
+
+    }
     // 更新 imageView 的大小时，imageView 可能已经被缩放过，所以要应用当前的缩放
-    self.imageView.qmui_frameApplyTransform = CGRectMakeWithSize(image.size);
+    self.imageView.qmui_frameApplyTransform = CGRectMakeWithSize(size);
     
     [self hideViews];
     self.imageView.hidden = NO;
@@ -270,7 +276,16 @@ static NSUInteger const kTagForCenteredPlayButton = 1;
     CGRect viewport = [self finalViewportRect];
     CGSize mediaSize = CGSizeZero;
     if (self.image) {
-        mediaSize = self.image.size;
+//        mediaSize = self.image.size;
+        CGSize size = self.image.size;
+        if (size.width/self.bounds.size.width > size.height/self.bounds.size.height) {
+            size = CGSizeMake(self.bounds.size.height/size.height*size.width, self.bounds.size.height);
+        }else{
+            size = CGSizeMake(self.bounds.size.width, self.bounds.size.width/size.width*size.height);
+
+        }
+        mediaSize = size;
+        
     } else if (isLivePhoto) {
         mediaSize = self.livePhoto.size;
     } else if (self.videoPlayerItem) {
@@ -303,7 +318,7 @@ static NSUInteger const kTagForCenteredPlayButton = 1;
     CGFloat minimumZoomScale = [self minimumZoomScale];
     CGFloat maximumZoomScale = enabledZoomImageView ? self.maximumZoomScale : minimumZoomScale;
     maximumZoomScale = MAX(minimumZoomScale, maximumZoomScale);// 可能外部通过 contentMode = UIViewContentModeScaleAspectFit 的方式来让小图片撑满当前的 zoomImageView，所以算出来 minimumZoomScale 会很大（至少比 maximumZoomScale 大），所以这里要做一个保护
-    CGFloat zoomScale = minimumZoomScale;
+    CGFloat zoomScale = 1;//minimumZoomScale;
     BOOL shouldFireDidZoomingManual = zoomScale == self.scrollView.zoomScale;
     self.scrollView.panGestureRecognizer.enabled = enabledZoomImageView;
     self.scrollView.pinchGestureRecognizer.enabled = enabledZoomImageView;
@@ -793,6 +808,7 @@ static NSUInteger const kTagForCenteredPlayButton = 1;
             if (self.scrollView.zoomScale < 1) {
                 // 如果目前显示的大小比原图小，则放大到原图
                 newZoomScale = 1;
+                gesturePoint = gestureRecognizer.view.center;
             } else {
                 // 如果当前显示原图，则放大到最大的大小
                 newZoomScale = self.scrollView.maximumZoomScale;
