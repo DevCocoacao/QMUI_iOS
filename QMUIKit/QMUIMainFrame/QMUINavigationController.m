@@ -530,6 +530,14 @@ static char kAssociatedObjectKey_qmui_viewWillAppearNotifyDelegate;
     // 子类可以重写
 }
 
+- (nullable id <UIViewControllerAnimatedTransitioning>)animationControllerForOperation:(UINavigationControllerOperation)operation
+                                                fromViewController:(UIViewController *)fromVC
+                                                           toViewController:(UIViewController *)toVC{
+    
+    return nil;
+
+}
+
 @end
 
 @implementation _QMUINavigationControllerDelegator
@@ -544,6 +552,16 @@ static char kAssociatedObjectKey_qmui_viewWillAppearNotifyDelegate;
     navigationController.viewControllerPopping = nil;
     [navigationController didShowViewController:viewController animated:animated];
 }
+
+
+- (nullable id <UIViewControllerAnimatedTransitioning>)navigationController:(QMUINavigationController *)navigationController
+                                   animationControllerForOperation:(UINavigationControllerOperation)operation
+                                                fromViewController:(UIViewController *)fromVC
+                                                           toViewController:(UIViewController *)toVC{
+    [navigationController animationControllerForOperation:operation fromViewController:fromVC toViewController:toVC];
+    return nil;
+}
+
 
 @end
 

@@ -32,6 +32,13 @@
  */
 - (void)didShowViewController:(nonnull UIViewController *)viewController animated:(BOOL)animated NS_REQUIRES_SUPER;
 
+/**
+ *  同上
+ */
+- (nullable id <UIViewControllerAnimatedTransitioning>)animationControllerForOperation:(UINavigationControllerOperation)operation
+                                                fromViewController:(UIViewController *)fromVC
+                                                           toViewController:(UIViewController *)toVC;
+
 @end
 
 
